@@ -7,8 +7,8 @@ def index():
     """
     View root function returns data in the index page
     """
-    message = 'NEWS'
-    return render_template('index.html',message = message)
+    title = 'HOME - WELCOME TO WHERE KNOWLEDGE IS POWER'
+    return render_template('index.html',title = title)
 
 
 
