@@ -17,4 +17,5 @@ def news(news_id):
     """
     View news function returns details in the news details page
     """
-    return render_template('news.html',id = news_id)
+    title = 'HAVEN OF NEWS WORLDWIDE'
+    return render_template('news.html',id = news_id,title = title)
