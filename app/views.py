@@ -12,7 +12,7 @@ def index():
 
 
 
-@app.route("/news/<int:news_id>")
+@app.route("/news/<news_id>")
 def news(news_id):
     """
     View news function returns details in the news details page
