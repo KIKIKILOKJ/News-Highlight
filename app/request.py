@@ -24,7 +24,7 @@ def get_news(category):
 
         if get_news_response['results']:
             news_results_list = get_news_response['results']
-            movie_results = process_results(news_results_list)
+            news_results = process_results(news_results_list)
 
 
     return news_results
