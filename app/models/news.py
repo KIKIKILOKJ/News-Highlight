@@ -1,13 +1,12 @@
-class News:
+class Business:
     """
-    News class to define news objects
+    Class to define arrangement of the business news
     """
-    def __init__(self,id,name,author,title,description,url,publishedAt):
-        self.id = id
+    def __init__(self,name,author,title,description,url,urlToImage,publishedAt):
         self.name = name
         self.author = author
         self.title = title
         self.description = description
         self.url = url
+        self.urlToImage = urlToImage
         self.publishedAt = publishedAt
-        
