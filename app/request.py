@@ -2,40 +2,50 @@ from app import app
 import urllib.request,json
 from .models import news
 
-News = news.News
 
 #getting api key
-api_key = app.config['NEWS_API_KEY']
+api_key = None
+#getting the news source url
+sources_url = None
+#getting news headlines urls
+business_top_headlines = None
+everything_news_url = None
+top_headlines_url = None
 
-#getting the movie base url
-base_url = app.config["NEWS_API_BASE_URL"]
-
-def get_news(category):
+def configure_request(app):
+    global api_key,sources_url,business_top_headlines,everything_news_url,top_headlines_url
+    api_key = app.config['NEWS_API_KEY']
+    sources_url = app.config('SOURCES_BASE_API_URL')
+    business_top_headlines_url = app.config['BUSINESS_TOP_HEADLINES']
+    everything_news_url = app.config['EVERYTHING_BASE_API_URL']
+    top_headlines_news_url = app.config['TOP_HEADLINES_BASE_API_URL']
+    
+def get_news():
     '''
-    Function that gets the json response to our url request
+    Function that gets the json response to our url request which is all news available on the particular headline
     '''
-    get_news_url = base_url.format(category,api_key)
+    complete_sources_url = sources_url.format(api_key)
 
-    with urllib.request.urlopen(get_news_url) as url:
-        get_news_data = url.read()
-        get_news_response = json.loads(get_news_data)
+    with urllib.request.urlopen(complete_sources_url) as url:
+        sources_data = url.read()
+        sources_response = json.loads(sources_data)
 
-        news_results = None
+        sources_results = None
 
-        if get_news_response['results']:
-            news_results_list = get_news_response['results']
-            news_results = process_results(news_results_list)
-
-
-    return news_results
+        if sources_response['sources']:
+            sources_news = sources_response['sources']
+            sources_results = process_news_sources(sources_news)
 
 
-def process_results(news_list):
+    return sources_results
+
+
+def process_news_sources(news_list):
     '''
     Function  that processes the news result and transform them to a list of Object news
 
     Returns :
-        news_results: A list of movie objects
+        sources_results: News from various parts of the world
     '''
     news_results = []
     for news_item in news_list:
@@ -46,8 +56,5 @@ def process_results(news_list):
         description = news_item.get('description')
         url = news_item.get('url')
         publishedAt = news_item('publishedAt')
-        if description:
-            news_object = News(id,name,author,title,description,url,publishedAt)
-            news_results.append(news_object)
 
     return news_results
