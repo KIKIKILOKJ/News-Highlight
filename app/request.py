@@ -1,179 +1,98 @@
-
 import urllib.request,json
-from .models import Headlines,Sources,Everything,Business
+from .models import Sources,Articles
+from datetime import datetime
 
+#getting the api key
+apiKey = None
 
-#getting api key
-api_key = None
-#getting the news source url
-sources_url = None
-#getting news headlines urls
-business_top_headlines = None
-everything_news_url = None
-top_headlines_url = None
+#getting the news base url
+base_url = None
+
+#getting the articles url
+articles_url = None
 
 def configure_request(app):
-    global api_key,sources_url,business_top_headlines,everything_news_url,top_headlines_url
-    api_key = app.config['NEWS_API_KEY']
-    sources_url = app.config('SOURCES_BASE_API_URL')
-    business_top_headlines_url = app.config['BUSINESS_TOP_HEADLINES']
-    everything_news_url = app.config['EVERYTHING_BASE_API_URL']
-    top_headlines_news_url = app.config['TOP_HEADLINES_BASE_API_URL']
-    
-def get_news_sources():
-    '''
-    Function that gets the json response to our url request which is all news available
-    '''
-    complete_sources_url = sources_url.format(api_key)
+	global apiKey,base_url,articles_url
+	apiKey = app.config['NEWS_API_KEY']
+	base_url = app.config['NEWS_SOURCES_BASE_URL']
+	articles_url = app.config['ARTICLES_BASE_URL']
 
-    with urllib.request.urlopen(complete_sources_url) as url:
-        sources_data = url.read()
-        sources_response = json.loads(sources_data)
+def get_sources(category):
+	'''
+	Function that gets the json response to our url request
+	'''
+	get_sources_url = base_url.format(category,apiKey)
 
-        sources_results = None
+	with urllib.request.urlopen(get_sources_url) as url:
+		get_sources_data = url.read()
+		get_sources_response = json.loads(get_sources_data)
 
-        if sources_response['sources']:
-            sources_news = sources_response['sources']
-            sources_results = process_news_sources(sources_news)
+		sources_results = None
+
+		if get_sources_response['sources']:
+			sources_results_list = get_sources_response['sources']
+			sources_results = process_sources(sources_results_list)
+
+	return sources_results
+
+def process_sources(sources_list):
+	'''
+	Function that processes the news sources results and turns them into a list of objects for viewing
+	'''
+	sources_results = []
+
+	for source_item in sources_list:
+		id = source_item.get('id') 
+		name = source_item.get('name')
+		description = source_item.get('description')
+		url = source_item.get('url')
+		category = source_item.get('category')
+		language = source_item.get('language')
+		country = source_item.get('country')
 
 
-    return sources_results
+		sources_object = Sources(id,name,description,url,category,country,language)
+		sources_results.append(sources_object)
 
 
-def process_news_sources(news_list):
-    '''
-    Function  that processes the news result and transform them to a list of Object news
+	return sources_results
 
-    Returns :
-        sources_results: News from various parts of the world
-    '''
-    news_results = []
-    for news_item in news_list:
-        id = news_item.get('id')
-        name = news_item.get('name')
-        author = news_item.get('author')
-        title = news_item.get('title')
-        description = news_item.get('description')
-        url = news_item.get('url')
-        publishedAt = news_item('publishedAt')
+def get_articles(id):
+	'''
+	Function that processes the articles and returns a list of articles objects for viewing by the user
+	'''
+	get_articles_url = articles_url.format(id,apiKey)
 
-    return news_results
+	with urllib.request.urlopen(get_articles_url) as url:
+		articles_results = json.loads(url.read())
 
-def get_news_headlines(source):
-    """
-    Function will fetch all the news headlines available
-    """
-    top_headlines_url = top_headlines_url.format(source, api_key )
 
-    with urllib.request.urlopen(top_headlines_url) as url:
-        headline_data = url.read()
-        headlines_response = json.loads(headline_data)
-        headlines_results = None
-        if headlines_response['articles']:
-            """
-            Searches for empty sources
-            """
-            headlines_items = headlines_response['articles']
-            headlines_results = process_headlines_sources(headlines_items)
+		articles_object = None
+		if articles_results['articles']:
+			articles_object = process_articles(articles_results['articles'])
 
-    return headlines_results
+	return articles_object
 
-def process_headlines_sources(headlines_list):
-    """
-    Function is responsible for processing data to Top Headlines available
-    """
-    headlines_results = []
-    for item in headlines_list:
-        author = item.get('author')
-        title = item.get('title')
-        description = item.get('description')
-        url = item.get('url')
-        urlToImage = item.get('urlToImage')
-        publishedAt = item.get('publishedAt')
-        news_headlines = headlines_list(author, title, description, url, urlToImage, publishedAt)
-        headlines_results.append(news_headlines)
+def process_articles(articles_list):
+	'''
+	'''
+	articles_object = []
+	for article_item in articles_list:
+		id = article_item.get('id')
+		author = article_item.get('author')
+		title = article_item.get('title')
+		description = article_item.get('description')
+		url = article_item.get('url')
+		image = article_item.get('urlToImage')
+		date = article_item.get('publishedAt')
+		
+		if image:
+			articles_result = Articles(id,author,title,description,url,image,date)
+			articles_object.append(articles_result)	
+		
 
-    return headlines_results
+		
 
-def get_everything_news():
-    """
-    Function that fetches all the news available for display
-    """
-    everything_complete_url = everything_news_url.format(api_key)
+		
 
-    with urllib.request.urlopen(everything_complete_url) as url:
-        everything_data = url.read()
-        everything_response = json.loads(everything_data)
-        everything_results = None
-
-        if everything_response['articles']:
-            everything_results_list = everything_response['articles']
-            everything_results = process_everything_results(everything_results_list)
-
-    return everything_results
-
-def process_everything_results(everything_results_list):
-    """
-    Function processes data given to produce the news available for display
-    """
-    everything_results = []
-    for item in everything_results_list:
-        author = item.get('author')
-        title = item.get('title')
-        description = item.get('description')
-        url = item.get('url')
-        urlToImage = item.get('urlToImage')
-        publishedAt = item.get('publishedAt')
-
-        everything_object = everything_results_list(author, title, description, url, urlToImage, publishedAt)
-        everything_results.append(everything_object)
-        
-    return everything_results
-
-def get_business_headlines():
-    """
-    Function will fetch business headlines and related news for viewing
-    """
-    business_headlines_complete_url = business_headlines_url.format(api_key)
-    with urllib.request.urlopen(business_headlines_complete_url) as url:
-        business_headlines_data = url.read()
-        business_headlines_response = json.loads(business_headlines_data)
-        business_headlines_results = None
-
-        if business_headlines_response['articles']:
-            business_headlines_results_list = business_headlines_response['articles']
-            business_headlines_results = process_business_headlines_results(business_headlines_results_list)
-
-    return business_headlines_results
-
-def process_business_headlines_results(business_headlines_results_list):
-    """
-    Function is responsible for processing data to news to the world of business
-    """
-    business_headlines_results = []
-    for item in business_headlines_results_list:
-        author = item.get('author')
-        title = item.get('title')
-        description = item.get('description')
-        url = item.get('url')
-        urlToImage = item.get('urlToImage')
-        publishedAt = item.get('publishedAt')
-
-        business_headlines_object = business_headlines_results_list(author, title, description, url, urlToImage, publishedAt)
-        business_headlines_results.append(business_headlines_object)
-        
-    return business_headlines_results
-
-def search_articles(source):
-    """
-    Function allows the user to search for articles
-    """
-    search_article_url = 'https://newsapi.org/v2/everything?q={}&apiKey={}'.format(source, api_key)
-    with urllib.request.urlopen(search_article_url) as url:
-        search_article_data = url.read()
-        search_article_response = json.loads(search_article_data)
-        search_article_results = None
-        if search_article_response['articles']:
-            search_article_list = search_article_response['articles']
-            search_article_results = process_business_headlines_results(search_article_list)
-    return search_article_results
+	return articles_object

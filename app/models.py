@@ -1,53 +1,26 @@
-class Business:
-    """
-    Class to define the display of the business news
-    """
-    def __init__(self,name,author,title,description,url,urlToImage,publishedAt):
-        self.name = name
-        self.author = author
-        self.title = title
-        self.description = description
-        self.url = url
-        self.urlToImage = urlToImage
-        self.publishedAt = publishedAt
-        
-class Headlines:
-    """
-    Class to define the display of the major headlines
-    """
-    def __init__(self,name,author,title,description,url,urlToImage,publishedAt):
-        self.name = name
-        self.author = author
-        self.title = title
-        self.description = description
-        self.url = url
-        self.urlToImage = urlToImage
-        self.publishedAt = publishedAt
-        
 class Sources:
-    """
-    Class define the display of all the news sources available
-    """
-    def __init__(self, id, name, url, country, description):
-        """
-        This method allows us to instantiate an instance.
-        """
-        self.id = id
+    '''
+    Sources class to define Sources Objects
+    '''
+
+    def __init__(self,id,name,description,url,category,country,language):
+        self.id =id
         self.name = name
-        self.url = url
-        self.country = country
         self.description = description
+        self.url = url
+        self.category = category
+        self.country = country
+        self.language = language
 
-
-class Everything:
-    """
-    Class to define the display of all the news
-    """
-    def __init__(self,name,author,title,description,url,urlToImage,publishedAt):
-        self.name = name
+class Articles:
+    '''
+    Articles class to define articles objects
+    '''
+    def __init__(self,id,author,title,description,url,image,date):
+        self.id = id
         self.author = author
         self.title = title
         self.description = description
         self.url = url
-        self.urlToImage = urlToImage
-        self.publishedAt = publishedAt
+        self.image = image
+        self.date = date

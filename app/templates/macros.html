@@ -1,49 +1,26 @@
-{% macro displayNewsSources(news_sources) %}
+{% macro displaySourceList(source_list) %} 
+{% for source_row in source_list |batch(4)%}
+<div class="row">
+    {% for sources in source_row %}
+    <div class="col-md-3">
 
-{% for item in news_sources %}
-<p> <a href="/source/{{item.id}}">{{item.name}}</a> </p>
-{% endfor %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="/sources/{{sources.id}}">
+							    {{ sources.name}}
+					        </a>
+            </div>
+            <div class="panel-body">
+                <p>
+                    {{ sources.description |truncate(100)}}
 
-{% endmacro %}
+                </p>
+                <a href="/sources/{{sources.id}}" class="btn btn-danger tn-sm">Visit {{sources.name}}</a>
+            </div>
 
-{% macro displayNews(news_items) %}
-
-{% for item in news_items %}
-{% if item.urlToImage %}
-<div class="view overlay z-depth-1-half">
-    <img src="{{item.urlToImage}}" class="img-responsive">
-    <a href="#!">
-        <div class="mask rgba-white-slight"></div>
-    </a>
-</div>
-<h4 class="font-weight-bold">{{item.title|truncate(80)}}</h4>
-<p class="grey-text">{{item.description}}</p>
-<p>by <a><strong>{{item.author}}</strong></a>, {{item.publishedAt}} </p>
-<a href="{{item.url}}" class="btn btn-success btn-md">Read more</a>
-
-{% endif %}
-{% endfor %}
-
-{% endmacro %}
-
-{% macro displayOtherNews(news_items) %}
-
-{% for item in news_items %}
-{% if item.urlToImage %}
-<div class="col-xs-12 col-sm-12 col-md-5 col-lg-3 col-xl-2">
-    <div class="view overlay z-depth-1-half">
-        <img src="{{item.urlToImage}}" class="img-fluid img-responsive">
-        <a href="#!">
-            <div class="mask rgba-white-slight"></div>
-        </a>
+        </div>
     </div>
-    <h4 class="my-4 font-weight-bold">{{item.title|truncate(80)}}</h4>
-    <p class="grey-text">{{item.description}}</p>
-    <p>by <a><strong>{{item.author}}</strong></a>, {{item.publishedAt}} </p>
-    <a href="{{item.url}}" class="btn btn-primary btn-md">Read more</a>
-    <hr class="my-3">
-</div>
-{% endif %}
-{% endfor %}
+    {% endfor %}
 
-{% endmacro %}
+</div>
+{% endfor %} {% endmacro %}

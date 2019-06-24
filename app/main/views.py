@@ -1,26 +1,29 @@
 from flask import render_template,request,redirect,url_for
 from . import main
-from ..request import get_news_sources,get_business_headlines,get_everything_news,get_news_headlines
+from ..request import get_sources,get_articles
+from ..models import Sources
 
-#View
+#views
 @main.route('/')
 def index():
-    """
-    View root function returns data in the index page
-    """
-    all_news_sources = get_news_sources()
-    everything_news_items = get_everything_news()
-    business_headlines = get_business_headlines()
-    title = 'HOME - WELCOME TO WHERE KNOWLEDGE IS POWER'
-    return render_template('index.html',title = title,sources = all_news_sources,featured = everything_news_items,business = business_headlines)
+	'''
+	view root page function that returns the index the page and its data
+	'''
+	sources = get_sources('business')
 
+	sports_sources = get_sources('sports')
+	technology_sources = get_sources('technology')
+	entertainment_sources = get_sources('entertainment')
+	title = "GLOBAL NEWS"
 
+	return render_template('index.html',title = title, sources = sources,sports_sources = sports_sources,technology_sources = technology_sources,entertainment_sources = entertainment_sources)
 
-@main.route("/source/<source>")
-def headlines(source):
-    """
-    View source function returns details in the news details page
-    """
-    news_headlines = get_news_headlines(source)
-    title = 'HAVEN OF NEWS WORLDWIDE'
-    return render_template('news.html',title = title, headlines = news_headlines)
+@main.route('/sources/<id>')
+def articles(id):
+	'''
+	view articles page
+	'''
+	articles = get_articles(id)
+	title = f'News Highlighter | {id}'
+
+	return render_template('articles.html',title= title,articles = articles)

@@ -1,55 +1,31 @@
-{% import 'macros.html' as macro %}
-{% extends 'base.html' %}
-{% block content %}
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-
- <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/mdb.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
-    <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">  
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        {% if title %}
-        <title> {{ title }}</title>
-        {% else %}
-        <title> KNOWLEDGE IS POWER </title>
-        {% endif %}
-    </head>
-    <body>
-        <div class="container-fluid">
-            <form>
-                <input type="text" id="search" name="article_query" placeholder="Search for an Article" class="form-control">
-                <input type="submit" value="Search" class="btn btn-success" id="btn">
-            </form>
-            <div class="row">
-                <div class="container col-md-2 mb-12">
-                    <div class="sidebar-sticky">
-                        <nav class="d-none d-md-block sidebar">
-                            <h1 class="text-muted" News Sources</h1>
-                    <hr>
-                    {{ macro.displayNewsSources(sources) }}
-                </nav>
-            </div>
-        </div>
-        <!--Grid column-->
-        <div class="col-lg-7 col-md-12 mb-12">
-            <h1 class="my-1">Wall Street Journal Articles</h1>
-            <hr class="my-3">
-            {{ macro.displayNews(others) }}
-        </div>
-        <div class="col-lg-7 col-md-12 mb-12">
-            <h1 class="my-1">Top headlines in the US</h1>
-            <hr class="my-3">
-            {{ macro.displayNews(business_headliness) }}
-        </div>
-    </div>
+{% extends 'base.html'%} {% import 'macros.html' as macro %} {% block content%} {% block styles %} {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename= 'styles.css') }}"> {% endblock %}
+<link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet">
+<div class="container">
 
 
-    </body>
-</html>
-{% endblock %}
+    <!-- Technology News -->
+
+    <h3 id="technology" style="color:blue;">Technology News </h3>
+    <hr> {{ macro.displaySourceList(technology_sources)}}
+
+    <!-- Entertainment News  -->
+
+    <h3 id="entertainment"style="color:blue;">Entertainment News </h3>
+    <hr> {{ macro.displaySourceList(entertainment_sources)}}
+
+    <!-- Top Sports News -->
+
+    <h3 id="sports"style="color:blue;">Sports News </h3>
+    <hr> {{ macro.displaySourceList(sports_sources)}}
+
+    <!-- Business News -->
+    <h3 id="business"style="color:blue;">Business News </h3>
+    <hr> {{ macro.displaySourceList(sources)}}
+
+
+
+</div>
+
+
+{%endblock%}
